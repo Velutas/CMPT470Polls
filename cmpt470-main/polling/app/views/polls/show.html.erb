@@ -1,0 +1,112 @@
+<% provide(:title, @poll.quest) %>
+
+<h2><%= @poll.quest %></h2>
+
+<% if @poll.creator_id == nil %>
+	<!-- <span style="font-size:0.8em;"> Preset Poll. </span> -->
+<% else %>
+	<span style="font-size:0.8em;">By <%= link_to @creator.name, '/users/' + @creator.id.to_s %></span>
+<% end %> 
+
+<% if @poll.desc != "" %>
+    <p><%= @poll.desc %></p>
+<% end %>
+
+<br>
+<% if @poll.tags.any? %>
+	<span style="font-size: 0.8em;">Tags:</span>
+	<% @poll.tags.each do |tag| %>
+		<span><%= tag.name %></span>
+	<% end %>
+	
+<% end %>
+
+<% if logged_in? %>
+
+<% if @poll.answers.any? %>
+
+	<%= form_for (@vote) do |f| %>
+		<div class="poll-vote-table"> <!-- for the whole table; all options -->
+			<% @poll.answers.each do |answer| %>
+				<table class="poll-vote-option"> <!-- for individual options -->
+					<tr>
+						<td>
+							<% if @vote.answer_id == answer.id %>
+								<%= radio_button_tag(:answer_id, answer.id, checked = true) %>
+							<% else %>
+								<%= radio_button_tag(:answer_id, answer.id) %>
+							<% end %>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<h3><%= label_tag(:answer, answer) %></h3>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Votes : <%= get_votes(@poll.id, answer.id) %>
+						</td>
+					</tr>
+				</table>
+			<% end %>
+		</div>
+			
+			<% if logged_in? %>
+				<%= hidden_field_tag(:user_id, current_user.id) %>
+			<% end %>
+			<%= hidden_field_tag(:poll_id, @poll.id) %>
+			<%= hidden_field_tag(:id, @vote.id) %>
+			<div class="actions">
+				<% if logged_in? %>
+					<%= f.submit "Vote" %>
+				<% else %>
+					You must be logged in to vote on this poll.
+				<% end %>
+			</div>
+	<% end %>
+
+<% end %>
+
+<section>
+	<h3>Comments</h3>
+	<div class="AllComments">
+		<ul>
+		<% @poll.poll_comments.each do |poll_comment| %>
+			<li class="Comment poll-list">
+				<h3><%= link_to User.find(poll_comment.commenter_id).name, '/users/' + User.find(poll_comment.commenter_id).id.to_s %></h3>
+				<%= poll_comment.body %>
+				<% if logged_in?  && @user.user_type == "admin" || @user.user_type == "moderator" %>
+					<br><%= link_to 'Delete Comment', [poll_comment.poll, poll_comment], method: :delete, data: { confirm: 'Permanently Delete Comment?' } %>
+				<% end %>
+			</li>
+			<br>
+		<% end %>
+		</ul>
+	</div>
+</section>
+
+<section>
+	<h3>Post a comment:</h3>
+	<%= form_for([@poll, @poll.poll_comments.build]) do |f| %>
+		<p>
+			<%- # f.number_field :commenter_id, :value => @user.id -%>
+			<%- @poll.poll_comments.build :commenter_id => @user.id -%>
+			<%= f.hidden_field :commenter_id, :value => @user.id %>			
+		</p>
+		<p>
+			<%= f.text_area :body, :rows => 4, :cols => 50 %>
+		</p>
+		<p>
+			<%= f.submit "Post Comment"%>
+		</p>
+	<% end %>
+	<% else %>
+		<div> You do not have permission to view this page. </br>Please log in to view polls. </div>
+		</br>
+	<% end %>
+</section>
+
+
+<%= link_to 'All Polls', polls_path %> | <%= link_to 'Top Polls', popular_path %>
+

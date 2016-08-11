@@ -1,0 +1,27 @@
+<h1> Top Five Polls </h1>
+
+<p>
+Polls with no votes will not be displayed. 
+</p>
+
+
+<ul>
+<% @polls.each do |poll| %>
+        <li class="poll-list">
+            <h3><%= link_to poll.quest, poll_path(poll), class: "Popular" %></h3>
+			<% if poll.creator_id != nil%>
+				by <%= link_to User.find(poll.creator_id).name, '/users/' + poll.creator_id.to_s %>
+			<% else %>
+				Preset Poll
+			<% end %>
+		</li>
+		<br>
+<% end %>
+</ul>
+
+
+<%= link_to 'All Polls', polls_path %>
+
+<% if logged_in? %>
+    | <%= link_to 'Create a Poll', new_poll_path %>
+<% end %>

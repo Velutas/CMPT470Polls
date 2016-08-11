@@ -1,0 +1,6 @@
+<%= @user.name %>,
+
+Welcome to Polling by RSKK!<br>
+Click the link below to activate your account and start answering polls.
+
+<%= edit_account_activation_url(@user.activation_token, email: @user.email) %>

@@ -1,0 +1,62 @@
+<h1> Polls </h1>
+
+
+
+<p>
+	<form style="margin-bottom: 1em;"><%= form_tag(polls_path, :method => 'get', id: "search-by-tag-form") do %>
+		<%= text_field_tag :searchByKeyword, params[:searchByKeyword], placeholder: "Search by keyword..." %>
+		<%= select_tag :searchByTag, content_tag(:option,'Filter by Tag...',:value=>"") + options_from_collection_for_select(@tagList, 'name', 'name', params[:searchByTag]) %>
+		<%= select_tag :sortOption, options_for_select(Poll::SORT_OPTIONS, params[:sortOption]) %>
+		<%= submit_tag "Filter & Sort", :name => nil %>
+	</form>
+	<span style="font-size: 0.8em; padding-top: 0;"><%= button_to 'Clear Filter', polls_path, method: :get %></span>
+</p> 
+
+
+<h2>Top Polls</h2>
+
+<p>Polls with no votes will not be displayed.</p>
+
+<ul>
+<% @popular_polls.each do |poll| %>
+        <li>
+	<%= link_to poll.quest, poll_path(poll), class: "Popular" %>
+	<% if logged_in?  && (@user.user_type == "admin" || @user.user_type == "moderator") %>
+		<%= link_to 'Delete Poll', poll_path(poll), method: :delete, data: { confirm: 'Delete poll? Warning: This is not reversible.' } %>
+	<% end %>	
+        </li>
+<% end %>
+</ul>
+
+
+<div id="DefaultPolls" class="PollList">
+	<h3> Polls </h3>
+	<% if @polls.any? %>
+		<ul>
+		<% @polls.each do |poll| %>
+			<li>
+			<%= link_to poll.quest, poll_path(poll) %>
+			
+			<% if logged_in?  && @user.user_type == "admin" %>
+				<%= link_to 'Delete Poll', poll_path(poll), method: :delete, data: { confirm: 'Delete poll? Warning: This is not reversible.' } %>
+			<% end %>
+
+			<br>
+			<% if poll.creator_id != nil%>
+				by <%= link_to User.find(poll.creator_id).name, '/users/' + poll.creator_id.to_s %>
+			<% else %>
+				<!-- Preset Poll -->
+			<% end %>
+			</li>
+		<% end %>
+		</ul>
+	<% else %>
+		<p>No polls found!</p>
+	<% end %>
+	</div>
+	<br>
+	<% if logged_in? %>
+	    <%= link_to 'Create a Poll', new_poll_path %>
+	<% end %>
+</section>
+<% end %>

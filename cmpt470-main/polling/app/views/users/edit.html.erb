@@ -1,0 +1,49 @@
+<h2>Account Options</h2>
+
+<%= form_for(@user) do |f| %>
+    <p> 
+		Username
+		<%= f.text_field :name %>
+	</p>
+    <p>
+        Email
+        <%= f.text_field :email %>
+	</p>
+    <p>
+        New Password
+        <%= f.password_field :password %>
+	</p>
+    <p>
+        Confirm New Password
+        <%= f.password_field :password_confirmation %>
+	</p>
+    <p>
+        Contact Visibility
+        <%= f.select :contact_visibility, @contact_map %>
+	</p>
+    <p>
+        Response Visibility
+        <%= f.select :response_visibility, @response_map %>
+	</p>
+    <%= hidden_field_tag(:id, @user.id) %>
+    <br>
+	
+    Enter current password to save changes.<br>
+    <span style="left-margin:1em">
+        <%= f.password_field :old_password, class: 'form-control' %>
+    </span>
+    <%= f.submit "Update Account", class: "btn btn-primary" %>
+<% end %>
+
+<% if @user.errors.any? %>
+<div id="error_explanation">
+  <div class="alert alert-danger">
+    The form contains <%= pluralize(@user.errors.count, "error") %>.
+  </div>
+  <ul>
+  <% @user.errors.full_messages.each do |msg| %>
+    <li><%= msg %></li>
+  <% end %>
+  </ul>
+</div>
+<% end %>

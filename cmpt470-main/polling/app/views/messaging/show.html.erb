@@ -1,0 +1,51 @@
+<h3><%= @received_message.title %></h3>
+<div style="display: table; min-width: 20em">
+    <p>
+    <%= @received_message.content %>
+    </p>
+    <div style="text-align:right">
+        <%= link_to User.find(@received_message.from_id).name, '/users/' + @received_message.from_id.to_s %>
+    </div>
+</div>
+
+<% if @message.to_id == @user.id %>
+    <input id="reply-expand" type="submit" value="Reply">
+    <%= form_for @message, :url => { :controller => 'messaging', :action => 'reply' } do |f| %>
+        <div id="reply-form">
+            <%= hidden_field_tag(:recipient_id, @received_message.to_id) %>
+            <%= f.hidden_field :from_id, :value => @user.id %>
+            <%= f.hidden_field :to_id, :value => @received_message.from_id %>
+            <p>
+                Subject:
+                <%= f.text_field :title, :value => "Re: " + @received_message.title%>
+            </p>
+            <p>
+                Message:
+                <div class="message-wrapper">
+                    <%= f.text_area :content, :rows => 12, :cols => 40 %>
+                </div>
+            </p>
+            <p>
+                <%= f.submit "Reply"%>
+            </p>
+        </div>
+    <% end %>
+
+    <% if @message.errors.any? %>
+        <div id="error_explanation">
+          <div class="alert alert-danger">
+            The form contains <%= pluralize(@message.errors.count, "error") %>.
+          </div>
+          <ul>
+          <% @message.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+          </ul>
+        </div>
+    <% end %>    
+
+<% end %>
+<br>
+<%= link_to 'Back', messaging_path %>
+
+

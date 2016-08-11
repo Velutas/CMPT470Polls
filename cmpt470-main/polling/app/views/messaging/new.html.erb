@@ -1,0 +1,34 @@
+<h1>Compose a new message</h1>
+<%= form_for @message, :url => { :controller => 'messaging', :action => 'send_msg' } do |f| %>
+    <%= f.hidden_field :from_id, :value => @user.id %>
+    <p>
+        To:<br>
+        <%= f.select :to_id, @friend_map %>
+    </p>
+    <p>
+        Subject:
+        <%= f.text_field :title %>
+    </p>
+    <p>
+        Message:
+        <div class="message-wrapper">
+            <%= f.text_area :content, :rows => 12, :cols => 40 %>
+        </div>
+    </p>
+    <p>
+        <%= f.submit "Send Message"%>
+    </p>
+<% end %>
+
+<% if @message.errors.any? %>
+<div id="error_explanation">
+  <div class="alert alert-danger">
+    The form contains <%= pluralize(@message.errors.count, "error") %>.
+  </div>
+  <ul>
+  <% @message.errors.full_messages.each do |msg| %>
+    <li><%= msg %></li>
+  <% end %>
+  </ul>
+</div>
+<% end %>

@@ -1,0 +1,16 @@
+<h1> Create a new Poll </h1>
+
+<%= render 'form' %> 
+
+<% if false %>
+    <h3> Add Some Answers </h3>
+
+    <%= f.fields_for :answer do |ff| %>
+        <%= ff.label :"Answer" %>
+        <%= ff.text_field :ans, placeholder: "An answer." %>
+    <% end %>
+
+<% end %>
+
+
+<%= link_to 'Top Polls', popular_path %> | <%= link_to 'All Polls', polls_path %>

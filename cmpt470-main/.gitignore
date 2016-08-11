@@ -1,0 +1,14 @@
+<<<<<<< HEAD
+Gemfile.lock
+.vagrant
+=======
+*~
+.vagrant
+
+*.pyc
+*.sqite3
+
+Gemfile.lock
+log/*
+.bundle
+>>>>>>> 2e5fee255d2144a778114ad1f3906c25218a9cf7

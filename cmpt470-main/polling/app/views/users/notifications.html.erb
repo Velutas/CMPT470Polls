@@ -1,0 +1,25 @@
+<% if @new_notifications %>
+  <ul>
+      <% @new_messages.each do |msg| %>
+        <li>
+            New message from <%= User.find(msg.from_id).name %>: <%= link_to msg.title, '/message/' + msg.id.to_s %>
+        </li>
+      <% end %>
+      <% @friend_requests.each do |fr| %>
+        <li>
+            Friend request from <%= User.find(fr.from_id).name %>
+            <%= button_to 'Accept', accept_path(:id => fr.id)%>
+            <%= button_to 'Reject', reject_path(:id => fr.id)%>
+        </li>
+      <% end %>
+      <% @suggestions.each do |suggestion| %>
+        <li>
+            You and <%= User.find(suggestion.from_id).name %> agreed on several polls. Want to friend them?
+            <%= button_to 'Send Friend Request', accept_suggestion_path(:suggest_id => suggestion.id, :friend_id => suggestion.from_id)%>
+            <%= button_to 'No Thanks', reject_suggestion_path(:suggest_id => suggestion.id, :friend_id => suggestion.from_id)%>
+        </li>
+      <% end %>
+  </ul>
+<% else %>
+  You don't have any notifications.
+<% end %>

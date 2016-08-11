@@ -1,0 +1,35 @@
+<!-- Header -->
+<div>
+    <div style="float:right">
+       <%= button_to 'Compose', messaging_new_path%>
+    </div>
+    <h1>Messaging</h1>
+</div>
+
+<h3>Inbox</h3>
+<ul style="list-style-type: none;">
+    <% @inbox.each do |msg| %>
+        <li>
+            <%= link_to msg.title, '/message/' + msg.id.to_s %>
+            <% if msg.seen == false %>
+                <span class="msg-new">New!</span>
+            <% end %>
+            <br>
+            from <%= link_to User.find(msg.from_id).name, '/users/' + msg.from_id.to_s %>
+        </li>
+    <% end %>
+</ul>
+
+<h3>Outbox</h3>
+<ul style="list-style-type: none;">
+    <% @outbox.each do |msg| %>
+        <li>
+            <%= link_to msg.title, '/message/' + msg.id.to_s %>
+            <% if msg.seen == false %>
+                <span class="msg-unread">Unread</span>
+            <% end %>
+            <br>
+            to <%= link_to User.find(msg.to_id).name, '/users/' + msg.to_id.to_s %>
+        </li>
+    <% end %>
+</ul>

@@ -1,0 +1,70 @@
+
+<%= form_for(@poll) do |f| %>
+  <div id="QErrorMessage"> 
+		<p> Error: Your question must be at least <%= @numloops %> characters long to submit. </p>
+  </div>
+  <div id="AErrorMessage">
+		<p> Error: Your poll must have at least two answers. </p>
+  </div>
+  
+  <!-- <p> <%= @user.name %> is creating a new poll! </p> -->
+  
+<section>
+	<h3>Poll Information</h3>
+	<p>
+	<%= f.label :"Question" %>
+	<%= f.text_field :quest, id: 'Question', autofocus: true, required: true, placeholder: "" %>
+	</p>
+
+
+  <div class="field">
+    <%= f.label :Description %><br>
+    <%= f.text_area :desc, required: false, placeholder: "Add some extra information (optional)", rows: "3", cols: "50" %>
+  </div>
+  
+  <h2>Tags</h2>
+  <%= f.nested_fields_for :tags do |nft| %>
+	<%= nft.remove_nested_fields_link %>
+	<%= nft.text_field :name %>
+  <% end %>
+  <%= f.add_nested_fields_link :tags %>
+  
+  </section>
+  
+  <section>
+  <h3>Answers</h3>
+  <p>
+	Enter answers. If you do not want the answer, click to remove it.
+	</br>
+	You must enter at least 2 answers. Answers can not be blank.
+  </p>
+  
+  <%= f.nested_fields_for :answers do |nfa| %>
+	<%= nfa.remove_nested_fields_link %>
+	<%= nfa.text_field :ans %>
+  <% end %>
+  <%= f.add_nested_fields_link :answers %>
+  </section>
+
+  
+  
+  <div class="actions SubmitButton">
+		<%= f.submit %>
+  </div>
+  
+  <!-- Error info -->
+  <% if @poll.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@poll.errors.count, "error") %> prohibited this poll from being saved:</h2>
+
+      <ul>
+      <% @poll.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+<% end %>
+
+	

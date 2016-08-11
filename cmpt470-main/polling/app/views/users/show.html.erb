@@ -1,0 +1,77 @@
+<% provide(:title, @user.name) %>
+<!-- Left Column -->
+<p id="notice"><%= flash[:info] %></p>
+<p id="notice" style="color:red"><%= flash[:error] %></p>
+
+<div style="background: #BBB; float: left;">
+    <div style=" background: #FFF; padding: 1em">
+        <h2><%= @user.name %></h2>
+    </div>
+    <div style="padding: 1em">
+        <h3>Friends</h3>
+          <ul>
+          <% @contacts.each do |contact| %>
+            
+            <% if contact.to_id == @user.id %>
+              <li><%= link_to User.find(contact.from_id).name, '/users/' + contact.from_id.to_s %></li>
+            <% else %>
+              <li><%= link_to User.find(contact.to_id).name, '/users/' + contact.to_id.to_s %></li>
+            <% end %>
+
+          <% end %>
+          </ul>
+      </div>
+  </div>
+</div>
+
+<div id = "userpage-main-header">  
+    <% if logged_in? && @user.id != current_user.id %>
+            <div id = "userpage-actions">
+              <%= form_for(@new_friend) do |f| %>
+                <%= f.hidden_field :from_id, :value => current_user.id %>
+                <%= f.hidden_field :to_id, :value => @user.id %>
+                <%= f.submit "Add Friend", class: "btn btn-primary" %>
+              <% end %>
+              
+              <% if current_user.user_type == "admin" && @user.user_type != "admin" %>
+                <%= form_for (@user), url: {action: "update_usertype"} do |f| %>
+                  User Type<br>
+                  <%= f.select :user_type, @type_map %><br>
+                  <%= f.hidden_field :id, :value => @user.id %>
+                  <%= f.submit "Update", class: "btn btn-primary" %>
+                <% end %>
+              <% end %>
+            </div>
+    <% end %>
+    </div>
+
+<div id="userpage-main" style="position:relative">
+  <!-- Main Feed -->
+	<h2>Recent Activity</h2><br>
+	  <div class = "userpage-main-latest">
+		<h3>Latest Responses</h3>
+		<ul>
+		  <% @response_activity.each do |resp| %>
+			<li class="poll-list">
+			  <h3><%= link_to Poll.find(resp.poll_id).quest, '/polls/' + resp.poll_id.to_s %></h3>
+			  <%= link_to @user.name, '/users/' + @user.id.to_s %> answered "<%= Answer.find(resp.answer_id) %>"
+			</li>
+			<br>
+		  <% end %>
+		</ul>
+	  </div>
+  
+	  <div class = "userpage-main-latest">
+		<h3>Latest Comments</h3>
+		<ul>
+		  <% @comments.each do |comment| %>
+			<li class="poll-list">
+			  <h3><%= link_to Poll.find(comment.poll_id).quest, '/polls/' + comment.poll_id.to_s %></h3>
+			  <%= comment.body %>
+			</li>
+			<br>
+		  <% end %>
+		</ul>
+	  </div>
+
+</div>
